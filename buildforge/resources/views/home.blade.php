@@ -14,6 +14,44 @@
         </div>
     </section>
 
+ {{-- Sobre a BuildForge --}}
+<section class="py-16 bg-gray-900 flex justify-center px-4">
+    <div 
+        class="max-w-4xl bg-gray-800 rounded-xl shadow-2xl p-10 text-center text-gray-300
+               transform opacity-0 translate-y-8
+               animate-fadeInUp
+               hover:scale-[1.03] hover:shadow-orange-500/50 transition-all duration-500 ease-out"
+        style="animation-fill-mode: forwards;"
+    >
+        <h2 class="text-3xl font-bold text-orange-400 mb-6">Sobre a BuildForge</h2>
+        <p class="text-lg leading-relaxed">
+            Na BuildForge, nossa missão é fornecer hardware de alta qualidade para gamers, profissionais e entusiastas de tecnologia.
+            Com uma curadoria cuidadosa dos melhores componentes e preços competitivos, buscamos oferecer a melhor experiência para quem quer montar ou atualizar seu PC.
+            Somos apaixonados por tecnologia e inovação, e estamos sempre prontos para ajudar você a encontrar o equipamento ideal para suas necessidades.
+        </p>
+    </div>
+</section>
+
+{{-- Animação customizada no seu CSS --}}
+<style>
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fadeInUp {
+  animation-name: fadeInUp;
+  animation-duration: 0.8s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}
+</style>
+
     {{-- Produtos em Destaque --}}
     <section class="py-16 bg-gray-900">
         <div class="container mx-auto px-4">

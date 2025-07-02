@@ -4,8 +4,23 @@
 <div class="min-h-screen bg-black text-white py-16">
     <div class="container mx-auto px-4">
         <h1 class="text-4xl font-bold text-orange-500 text-center mb-12 animate-fade-in-down">
-            Todos os Produtos
+            Produtos @if($categoriaAtual) da categoria "{{ $categoriaAtual->nome }}" @else Todos @endif
         </h1>
+
+        {{-- Filtro de Categorias --}}
+        <div class="mb-10 flex flex-wrap justify-center gap-4">
+            <a href="{{ route('produtos.index') }}"
+               class="px-4 py-2 rounded {{ is_null($categoriaAtual) ? 'bg-orange-500 text-black font-bold' : 'bg-gray-800 hover:bg-gray-700' }}">
+                Todas
+            </a>
+            @foreach ($categorias as $cat)
+                <a href="{{ route('produtos.index', ['categoria' => $cat->id]) }}"
+                   class="px-4 py-2 rounded 
+                      {{ $categoriaAtual && $categoriaAtual->id === $cat->id ? 'bg-orange-500 text-black font-bold' : 'bg-gray-800 hover:bg-gray-700' }}">
+                    {{ $cat->nome }}
+                </a>
+            @endforeach
+        </div>
 
         @if ($produtos->count())
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">

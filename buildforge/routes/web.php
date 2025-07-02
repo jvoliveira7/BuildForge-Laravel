@@ -6,28 +6,37 @@ use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CarrinhoController;
 
-
-// Página inicial (Home)
+// Rotas públicas (convidados)
 Route::get('/', [HomeController::class, 'index'])->name('home');
-
-// Página de produtos
 Route::get('/produtos', [ProdutoController::class, 'index'])->name('produtos.index');
 
-// Dashboard (apenas usuários autenticados)
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Rotas para usuários autenticados (clientes)
+Route::middleware(['auth'])->group(function () {
+    // Carrinho
+    Route::get('/carrinho', [CarrinhoController::class, 'index'])->name('carrinho.index');
+    Route::post('/carrinho/adicionar/{id}', [CarrinhoController::class, 'adicionar'])->name('carrinho.adicionar');
+    Route::post('/carrinho/remover/{id}', [CarrinhoController::class, 'remover'])->name('carrinho.remover');
 
-// Perfil do usuário
-Route::middleware('auth')->group(function () {
+    // Perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Dashboard (cliente)
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->middleware('verified')->name('dashboard');
 });
 
-// Carrinho 
-Route::get('/carrinho', [CarrinhoController::class, 'index'])->name('carrinho.index');
-Route::post('/carrinho/adicionar/{id}', [CarrinhoController::class, 'adicionar'])->name('carrinho.adicionar');
-Route::post('/carrinho/remover/{id}', [CarrinhoController::class, 'remover'])->name('carrinho.remover');
+// Rotas para administradores
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('admin.dashboard');
+
+    // Aqui você pode adicionar recursos admin, por exemplo:
+    // Route::resource('produtos', ProdutoController::class);
+    // Route::resource('categorias', CategoriaController::class);
+});
 
 require __DIR__.'/auth.php';
