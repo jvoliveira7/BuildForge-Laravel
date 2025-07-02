@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <div class="min-h-screen flex items-center justify-center bg-black text-white">
+    <div class="min-h-screen flex items-center justify-center bg-gray text-white">
         <div class="w-full max-w-md p-8 bg-gray-900 rounded-lg shadow-lg">
 
             <h2 class="text-3xl font-bold text-orange-500 text-center mb-6">Criar Conta - BuildForge</h2>

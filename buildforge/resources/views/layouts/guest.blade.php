@@ -14,13 +14,13 @@
     <!-- Styles & Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans bg-black text-white antialiased min-h-screen flex items-center justify-center">
+<body class="font-sans bg-gray-900 text-white antialiased min-h-screen flex items-center justify-center">
 
-    <div class="w-full max-w-lg mx-4 p-10 bg-gray-900 rounded-3xl shadow-xl">
+    <div class="w-full max-w-lg mx-4 p-6 bg-gray-900 rounded-3xl shadow-xl">
         {{-- Logo ou nome da aplicação --}}
-        <div class="flex items-center justify-center space-x-3 mb-10">
-            <x-application-logo class="w-12 h-12 fill-current text-orange-500" />
-            <span class="text-orange-500 font-extrabold text-3xl select-none">BuildForge</span>
+        <div class="flex items-center justify-center space-x-3 mb-6">
+            <x-application-logo class="w-10 h-10 fill-current text-orange-500" />
+            <span class="text-orange-500 font-extrabold text-2xl select-none">BuildForge</span>
         </div>
 
         {{-- Container do formulário --}}
@@ -30,5 +30,4 @@
     </div>
 
 </body>
-
 </html>

@@ -1,8 +1,11 @@
 <x-guest-layout>
-    <div class="min-h-screen flex items-center justify-center bg-black text-white">
+    <div class="min-h-screen flex items-center justify-center bg-gray-900 text-white">
         <div class="w-full max-w-md p-8 bg-gray-900 rounded-lg shadow-lg">
 
-            <h2 class="text-3xl font-bold text-orange-500 text-center mb-6">Login - BuildForge</h2>
+            <div class="flex items-center justify-center space-x-3 mb-6">
+                <x-rpg-forging class="w-8 h-8 text-orange-500" />
+                <h2 class="text-3xl font-bold text-orange-500 text-center">Login - BuildForge</h2>
+            </div>
 
             <!-- Session Status -->
             <x-auth-session-status class="mb-4" :status="session('status')" />
