@@ -8,10 +8,7 @@ class ProdutoController extends Controller
 {
     public function index()
     {
-        // Pega todos os produtos do banco (se existir)
-        $produtos = Produto::all();
-
-        // Retorna a view passando os produtos
-        return view('produtos.index', compact('produtos'));
+      $produtos = Produto::latest()->paginate(12); // ou ->get() se não quiser paginação
+    return view('produtos.index', compact('produtos'));
     }
 }

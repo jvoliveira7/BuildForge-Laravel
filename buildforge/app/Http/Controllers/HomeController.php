@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Produto;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        // Retorna a view resources/views/home.blade.php
-        return view('home');
+    $produtos = Produto::latest()->take(4)->get(); // Exibe os 4 mais recentes
+    return view('home', compact('produtos'));
     }
 }
