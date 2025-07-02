@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen bg-black text-white py-12">
+<div class="min-h-screen bg-gray-600 text-white py-12">
     <div class="container mx-auto px-4">
         <h1 class="text-3xl font-bold text-orange-500 mb-8">Seu Carrinho</h1>
 
