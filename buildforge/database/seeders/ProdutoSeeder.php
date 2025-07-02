@@ -59,6 +59,13 @@ class ProdutoSeeder extends Seeder
                 'preco' => 599.90,
                 'imagem' => 'produtos/asus-b450m.jpg',
             ],
+
+            [
+                'nome' => 'HD 1 TB Seagate Barracuda',
+                'descricao' => 'HD SATA III de 7200RPM, ideal para armazenar seus jogos e arquivos.',
+                'preco' => 319.00,
+                'imagem' => 'produtos/hd-barracuda.jpg',
+            ],
         ]);
     }
 }

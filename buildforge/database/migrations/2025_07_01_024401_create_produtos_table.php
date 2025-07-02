@@ -14,6 +14,7 @@ class CreateProdutosTable extends Migration
             $table->text('descricao')->nullable();
             $table->decimal('preco', 8, 2);
             $table->timestamps();
+            
         });
     }
 

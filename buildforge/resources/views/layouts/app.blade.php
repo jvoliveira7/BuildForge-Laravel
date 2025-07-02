@@ -37,7 +37,7 @@
             @guest
                 <a href="{{ route('login') }}" class="hover:text-orange-400 text-white">Login</a>
             @else
-                <a href="{{ route('profile.show') }}" class="hover:text-orange-400 text-white">Perfil</a>
+            <a href="{{ route('profile.show') }}" class="hover:text-orange-400 text-white">Perfil</a>
                 <a href="{{ route('logout') }}" class="hover:text-orange-400 text-white"
                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                    Sair

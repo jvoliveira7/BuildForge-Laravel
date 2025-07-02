@@ -50,6 +50,16 @@
                     </x-primary-button>
                 </div>
             </form>
+
+            <!-- Botão Registrar-se -->
+            @if (Route::has('register'))
+                <div class="mt-6 text-right">
+                    <a href="{{ route('register') }}" class="text-sm text-orange-500 hover:underline font-semibold">
+                        {{ __('Registrar-se') }}
+                    </a>
+                </div>
+            @endif
+
         </div>
     </div>
 </x-guest-layout>
