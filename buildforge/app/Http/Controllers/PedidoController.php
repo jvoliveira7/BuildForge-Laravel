@@ -7,59 +7,19 @@ use Illuminate\Http\Request;
 
 class PedidoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        // Lista todos os pedidos, paginados
+        $pedidos = Pedido::with('user')->latest()->paginate(10);
+        return view('admin.pedidos.index', compact('pedidos'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(Pedido $pedido)
     {
-        //
+        // Carrega pedido com itens e usuário
+        $pedido->load('itens.produto', 'user');
+        return view('admin.pedidos.show', compact('pedido'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Pedido $pedido)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Pedido $pedido)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Pedido $pedido)
-    {
-        //
-    }
+    // Você pode implementar update e destroy se quiser editar ou deletar pedidos.
 }

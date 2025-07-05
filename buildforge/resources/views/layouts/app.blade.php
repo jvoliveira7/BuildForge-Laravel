@@ -21,7 +21,7 @@
             <a href="{{ url('/') }}" class="hover:text-orange-400 text-white">Home</a>
             <a href="{{ route('produtos.index') }}" class="hover:text-orange-400 text-white">Produtos</a>
 
-            <a href="{{ route('carrinho.index') }}" class="relative hover:text-orange-400 text-white flex items-center gap-1">
+                    <a href="{{ route('carrinho.index') }}" class="relative hover:text-orange-400 text-white flex items-center gap-1">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.2 6M17 13l1.2 6M6 19a1 1 0 100 2 1 1 0 000-2zm12 0a1 1 0 100 2 1 1 0 000-2z"/>
                 </svg>
@@ -37,10 +37,21 @@
             @guest
                 <a href="{{ route('login') }}" class="hover:text-orange-400 text-white">Login</a>
             @else
-            <a href="{{ route('profile.show') }}" class="hover:text-orange-400 text-white">Perfil</a>
+                {{-- Botão GERENCIAR para Admin --}}
+                @role('admin')
+                    <a href="{{ route('admin.dashboard') }}"
+                       class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg flex items-center gap-2 shadow-md transition duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        GERENCIAR
+                    </a>
+                @endrole
+
+                <a href="{{ route('profile.show') }}" class="hover:text-orange-400 text-white">Perfil</a>
                 <a href="{{ route('logout') }}" class="hover:text-orange-400 text-white"
                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                   Sair
+                    Sair
                 </a>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">@csrf</form>
             @endguest
