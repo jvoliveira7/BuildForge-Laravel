@@ -5,6 +5,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CarrinhoController;
+use App\Http\Controllers\Admin\ProdutoControllerAD;
+use App\Http\Controllers\Admin\CategoriaController;
 
 // Rotas públicas (convidados)
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -25,8 +27,8 @@ Route::middleware(['auth', 'role:cliente', 'verified'])->group(function () {
 
 // Rotas para qualquer usuário autenticado (cliente ou admin)
 Route::middleware(['auth'])->group(function () {
-    // Perfil (completo: visualizar, editar, atualizar e excluir)
-    Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show'); // <-- Adicionada aqui
+    // Perfil (visualização, edição, atualização e exclusão)
+    Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -34,13 +36,14 @@ Route::middleware(['auth'])->group(function () {
 
 // Rotas exclusivas para administradores
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+    // Dashboard admin
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
 
-    // CRUD administrativo (descomente quando implementar)
-    // Route::resource('produtos', ProdutoController::class);
-    // Route::resource('categorias', CategoriaController::class);
+    // CRUD admin para produtos e categorias
+    Route::resource('produtos', ProdutoControllerAD::class)->names('admin.produtos');
+    Route::resource('categorias', CategoriaController::class)->names('admin.categorias');
 });
 
 require __DIR__.'/auth.php';
