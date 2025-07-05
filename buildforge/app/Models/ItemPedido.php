@@ -13,7 +13,7 @@ class ItemPedido extends Model
         'pedido_id',
         'produto_id',
         'quantidade',
-        'preco',
+        'preco_unitario',
     ];
 
     // Relacionamento: um ItemPedido pertence a um Pedido

@@ -13,25 +13,26 @@ class CarrinhoController extends Controller
         return view('carrinho.index', compact('carrinho'));
     }
 
-    public function adicionar(Request $request, $id)
-    {
-        $produto = Produto::findOrFail($id);
-        $carrinho = session()->get('carrinho', []);
+public function adicionar(Request $request, $id)
+{
+    $produto = Produto::findOrFail($id);
+    $carrinho = session()->get('carrinho', []);
 
-        if (isset($carrinho[$id])) {
-            $carrinho[$id]['quantidade']++;
-        } else {
-            $carrinho[$id] = [
-                "nome" => $produto->nome,
-                "preco" => $produto->preco,
-                "imagem" => $produto->imagem,
-                "quantidade" => 1
-            ];
-        }
-
-        session()->put('carrinho', $carrinho);
-        return redirect()->back()->with('success', 'Produto adicionado ao carrinho!');
+    if (isset($carrinho[$id])) {
+        $carrinho[$id]['quantidade']++;
+    } else {
+        $carrinho[$id] = [
+            "produto_id" => $produto->id, 
+            "nome" => $produto->nome,
+            "preco" => $produto->preco,
+            "imagem" => $produto->imagem,
+            "quantidade" => 1
+        ];
     }
+
+    session()->put('carrinho', $carrinho);
+    return redirect()->back()->with('success', 'Produto adicionado ao carrinho!');
+}
 
     public function remover($id)
     {

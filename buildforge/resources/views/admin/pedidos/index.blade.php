@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
 <div class="container mx-auto py-12 px-4">
@@ -23,7 +23,7 @@
                         <td class="py-3 px-6">{{ $pedido->created_at->format('d/m/Y H:i') }}</td>
                         <td class="py-3 px-6 font-semibold text-green-700">{{ ucfirst($pedido->status) }}</td>
                         <td class="py-3 px-6 text-center">
-                            <a href="{{ route('admin.pedidos.edit', $pedido) }}" class="text-green-600 hover:underline">Editar</a>
+                            <a href="{{ route('admin.pedidos.show', $pedido) }}" class="text-green-600 hover:underline">Ver Detalhes</a>
                         </td>
                     </tr>
                 @endforeach

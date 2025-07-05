@@ -13,10 +13,13 @@
             <div class="space-y-4">
                 @php $total = 0; @endphp
                 @foreach ($carrinho as $id => $item)
-                    @php $subtotal = $item['preco'] * $item['quantidade']; $total += $subtotal; @endphp
+                    @php
+                        $subtotal = $item['preco'] * $item['quantidade'];
+                        $total += $subtotal;
+                    @endphp
 
                     <div class="bg-gray-800 p-4 rounded shadow flex gap-4 items-center">
-                        <img src="{{ asset('storage/' . $item['imagem']) }}" class="w-20 h-20 object-cover rounded">
+                        <img src="{{ asset('storage/' . $item['imagem']) }}" class="w-20 h-20 object-cover rounded" alt="{{ $item['nome'] }}">
                         <div class="flex-1">
                             <h3 class="font-semibold">{{ $item['nome'] }}</h3>
                             <p class="text-gray-300">Quantidade: {{ $item['quantidade'] }}</p>
@@ -32,6 +35,11 @@
                 <div class="mt-8 text-right text-xl font-bold text-orange-500">
                     Total: R$ {{ number_format($total, 2, ',', '.') }}
                 </div>
+
+                {{-- Botão Finalizar Pedido --}}
+           <a href="{{ route('checkout') }}" class="px-6 py-3 bg-green-600 text-white rounded hover:bg-green-700 inline-block text-center">
+    Checkout
+</a>
             </div>
         @else
             <p class="text-gray-400">Seu carrinho está vazio.</p>

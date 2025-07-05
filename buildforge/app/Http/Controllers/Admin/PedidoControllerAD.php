@@ -8,31 +8,45 @@ use Illuminate\Http\Request;
 
 class PedidoControllerAD extends Controller
 {
+    // Listar todos os pedidos (paginação)
     public function index()
     {
-        // Pega todos os pedidos ordenados do mais recente
         $pedidos = Pedido::with('user')->latest()->paginate(15);
-
         return view('admin.pedidos.index', compact('pedidos'));
     }
 
-    // Edit e Destroy para pedidos
-    public function edit(Pedido $pedido)
-{
-    return view('admin.pedidos.edit', compact('pedido'));
-}
+        public function edit(Pedido $pedido)
+        {
+            // Carrega os itens e usuário para mostrar na tela de edição
+            $pedido->load(['itens.produto', 'user']);
+            return view('admin.pedidos.edit', compact('pedido'));
+        }
 
-public function update(Request $request, Pedido $pedido)
-{
-    $request->validate([
-        'status' => 'required|string|in:aguardando,pago,enviado,cancelado',
-    ]);
+    // Exibir detalhes de um pedido específico
+    public function show(Pedido $pedido)
+    {
+        // carregar relacionamento itens e usuário
+        $pedido->load(['itens.produto', 'user']);
+        return view('admin.pedidos.show', compact('pedido'));
+    }
 
-    $pedido->update([
-        'status' => $request->status,
-    ]);
+    // (Opcional) Atualizar status do pedido
+    public function update(Request $request, Pedido $pedido)
+    {
+        $request->validate([
+            'status' => 'required|string|in:pendente,processando,enviado,entregue,cancelado',
+        ]);
 
-    return redirect()->route('admin.pedidos.index')->with('success', 'Status do pedido atualizado!');
-}
+        $pedido->status = $request->status;
+        $pedido->save();
 
+        return redirect()->route('admin.pedidos.show', $pedido)->with('success', 'Status do pedido atualizado.');
+    }
+
+    // (Opcional) Deletar pedido
+    public function destroy(Pedido $pedido)
+    {
+        $pedido->delete();
+        return redirect()->route('admin.pedidos.index')->with('success', 'Pedido excluído com sucesso.');
+    }
 }
