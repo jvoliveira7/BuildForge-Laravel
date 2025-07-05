@@ -1,35 +1,95 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <title>Comprovante Pedido #{{ $pedido->id }}</title>
+    <style>
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 14px;
+            color: #000;
+            margin: 20px;
+        }
 
-@section('content')
-<div class="min-h-screen bg-gray-600 text-white py-12">
-    <div class="container mx-auto px-4">
-        <h1 class="text-3xl font-bold text-orange-500 mb-6">Detalhes do Pedido #{{ $pedido->id }}</h1>
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-        <div class="bg-gray-800 p-6 rounded shadow space-y-4">
-            <p><strong>Status:</strong> <span class="capitalize">{{ $pedido->status }}</span></p>
-            <p><strong>Total:</strong> <span class="text-orange-400">R$ {{ number_format($pedido->total, 2, ',', '.') }}</span></p>
-            <p><strong>Data:</strong> {{ $pedido->created_at->format('d/m/Y H:i') }}</p>
+        p {
+            margin: 5px 0;
+        }
 
-            <h2 class="text-xl font-semibold mt-6 mb-4 text-orange-400">Itens do Pedido</h2>
+        .cliente {
+            margin-bottom: 20px;
+        }
 
-            <div class="space-y-4">
-                @foreach ($pedido->itens as $item)
-                    <div class="flex items-center gap-4 bg-gray-700 p-4 rounded">
-                        <img src="{{ asset('storage/' . $item->produto->imagem) }}" alt="{{ $item->produto->nome }}" class="w-20 h-20 object-cover rounded">
-                        <div>
-                            <p class="font-semibold text-white">{{ $item->produto->nome }}</p>
-                            <p>Quantidade: {{ $item->quantidade }}</p>
-                            <p>Preço unitário: R$ {{ number_format($item->preco_unitario, 2, ',', '.') }}</p>
-                            <p>Subtotal: R$ {{ number_format($item->preco_unitario * $item->quantidade, 2, ',', '.') }}</p>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        </div>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
 
-        <a href="{{ route('pedidos.index') }}" class="inline-block mt-8 bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded transition">
-            Voltar para Meus Pedidos
-        </a>
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        .total {
+            text-align: right;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>BuildForge - Comprovante de Pedido</h1>
+
+    <div class="cliente">
+        <p><strong>Nº do Pedido:</strong> {{ $pedido->id }}</p>
+        <p><strong>Cliente:</strong> {{ $pedido->user->name ?? '—' }}</p>
+        <p><strong>Email:</strong> {{ $pedido->user->email ?? '—' }}</p>
+        <p><strong>Data:</strong> {{ $pedido->created_at->format('d/m/Y H:i') }}</p>
+        <p><strong>Status:</strong> {{ ucfirst($pedido->status) }}</p>
     </div>
-</div>
-@endsection
+
+    <table>
+        <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Quantidade</th>
+                <th>Preço Unitário</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($pedido->itens as $item)
+            <tr>
+                <td>{{ $item->produto->nome ?? 'Produto removido' }}</td>
+                <td>{{ $item->quantidade }}</td>
+                <td>R$ {{ number_format($item->preco_unitario, 2, ',', '.') }}</td>
+                <td>R$ {{ number_format($item->preco_unitario * $item->quantidade, 2, ',', '.') }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <p class="total">Total do Pedido: R$ {{ number_format($pedido->total, 2, ',', '.') }}</p>
+
+    <div class="footer">
+        Obrigado por comprar com a BuildForge. Este é um comprovante automático.
+    </div>
+</body>
+</html>

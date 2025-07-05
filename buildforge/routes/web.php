@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\ProdutoControllerAD;
 use App\Http\Controllers\Admin\CategoriaControllerAD;
 use App\Http\Controllers\Admin\PedidoControllerAD;
 use App\Http\Controllers\PedidoController;
+use App\Http\Controllers\ComprovanteController;
 
 // Rotas públicas
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -31,11 +32,20 @@ Route::middleware(['auth', 'role:cliente', 'verified'])->group(function () {
     // Pedidos do cliente
     Route::get('/pedidos', [PedidoController::class, 'index'])->name('pedidos.index');
     Route::get('/pedidos/{pedido}', [PedidoController::class, 'show'])->name('pedidos.show');
+    Route::get('/pedidos/{pedido}/comprovante', [PedidoController::class, 'comprovante'])->name('pedidos.comprovante');
+    Route::get('/pedidos/{pedido}/comprovante', [PedidoController::class, 'comprovante'])->name('pedidos.comprovante');
+
 
     // Dashboard do cliente
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+
+    // Gerar PDF do comprovante de pedido
+    Route::get('/pedidos/{pedido}/comprovante', [\App\Http\Controllers\ComprovanteController::class, 'gerar'])
+    ->middleware(['auth', 'role:cliente'])
+    ->name('pedidos.comprovante');
+     Route::get('/comprovante/{pedido}', [ComprovanteController::class, 'gerar'])->name('comprovante.gerar');
 });
 
 // Rotas autenticadas para qualquer usuário

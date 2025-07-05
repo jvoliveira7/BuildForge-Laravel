@@ -6,9 +6,24 @@ use Illuminate\Http\Request;
 use App\Models\Pedido;
 use App\Models\ItemPedido;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PedidoController extends Controller
 {
+
+    public function comprovante(Pedido $pedido)
+{
+    if ($pedido->user_id !== auth()->id()) {
+        abort(403);
+    }
+
+    $pedido->load('itens.produto');
+
+    $pdf = Pdf::loadView('pedidos.comprovante', compact('pedido'));
+
+    return $pdf->download("comprovante_pedido_{$pedido->id}.pdf");
+}
+
     public function index()
     {
         $pedidos = Pedido::where('user_id', auth()->id())
@@ -26,6 +41,7 @@ public function checkout()
     if (empty($carrinho)) {
         return redirect()->route('carrinho.index')->with('error', 'Seu carrinho está vazio.');
     }
+    
 
     // Calcula o total
     $total = 0;
@@ -55,6 +71,8 @@ public function checkout()
         if (empty($carrinho)) {
             return redirect()->back()->with('error', 'Seu carrinho está vazio.');
         }
+
+        
 
 \Log::info('Entrou em finalizar pedido para usuário ' . auth()->id());
 

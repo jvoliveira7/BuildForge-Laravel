@@ -12,21 +12,10 @@
                 Ver Produtos
             </a>
 
-            {{-- Botão Gerenciar para admins --}}
-            @auth
-                @if(auth()->user()->hasRole('admin'))
-                    <div class="mt-6">
-                        <a href="{{ route('admin.dashboard') }}"
-                           class="inline-block px-6 py-3 bg-black text-orange-500 rounded hover:bg-gray-800 font-semibold">
-                            Gerenciar Dashboard
-                        </a>
-                    </div>
-                @endif
-            @endauth
+        
         </div>
     </section>
 
-    {{-- O restante do seu conteúdo continua igual --}}
     {{-- Sobre a BuildForge --}}
     <section class="py-16 bg-gray-900 flex justify-center px-4">
         <div 

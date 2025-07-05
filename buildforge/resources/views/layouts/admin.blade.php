@@ -16,7 +16,7 @@
             <a href="{{ route('admin.produtos.index') }}" class="hover:text-orange-500">Produtos</a>
             <a href="{{ route('admin.categorias.index') }}" class="hover:text-orange-500">Categorias</a>
             <a href="{{ route('admin.pedidos.index') }}" class="hover:text-orange-500">Pedidos</a>
-            <a href="{{ route('dashboard') }}" class="hover:text-orange-500">Voltar ao site</a>
+            <a href="{{ route('home') }}" class="hover:text-orange-500">Voltar ao site</a>  
         </nav>
     </div>
 </header>
