@@ -19,7 +19,6 @@ class NewsletterController extends Controller
                 'updated_at' => now(),
             ]);
 
-            Mail::to($request->email)->send(new \App\Mail\NewsletterWelcome());
 
             return back()->with('success', 'E-mail cadastrado com sucesso!');
         }
