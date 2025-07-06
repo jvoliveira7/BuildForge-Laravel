@@ -6,21 +6,83 @@
             <h1 class="text-4xl font-bold text-orange-500 text-center mb-12 animate-fade-in-down">
                 Produtos @if($categoriaAtual) da categoria "{{ $categoriaAtual->nome }}" @else Todos @endif
             </h1>
+            
+{{-- Menu de Filtros: Categorias + Ordenação --}}
+<div class="mb-10 flex flex-wrap justify-center gap-4">
 
-            {{-- Filtro de Categorias --}}
-            <div class="mb-10 flex flex-wrap justify-center gap-4">
+    {{-- Dropdown de Categorias --}}
+    <div class="relative inline-block text-left" id="categoria-dropdown">
+        <button onclick="toggleMenu()" class="inline-flex items-center justify-center px-6 py-2 bg-orange-500 text-black font-semibold rounded hover:bg-orange-600 transition">
+            Categorias
+            <svg class="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+        </button>
+
+        <div id="categoria-menu" class="hidden origin-top absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 z-50">
+            <div class="py-1">
                 <a href="{{ route('produtos.index') }}"
-                class="px-4 py-2 rounded {{ is_null($categoriaAtual) ? 'bg-orange-500 text-black font-bold' : 'bg-gray-800 hover:bg-gray-700' }}">
-                    Todas
+                   class="categoria-option block px-4 py-2 text-sm {{ is_null($categoriaAtual) ? 'bg-orange-500 text-black font-bold' : 'text-white hover:bg-gray-700' }}">
+                    Todas as Categorias
                 </a>
                 @foreach ($categorias as $cat)
-                    <a href="{{ route('produtos.index', ['categoria' => $cat->id]) }}"
-                    class="px-4 py-2 rounded 
-                        {{ $categoriaAtual && $categoriaAtual->id === $cat->id ? 'bg-orange-500 text-black font-bold' : 'bg-gray-800 hover:bg-gray-700' }}">
+                    <a href="{{ route('produtos.index', ['categoria' => $cat->id, 'ordenar' => request('ordenar')]) }}"
+                       class="categoria-option block px-4 py-2 text-sm 
+                       {{ $categoriaAtual && $categoriaAtual->id === $cat->id ? 'bg-orange-500 text-black font-bold' : 'text-white hover:bg-gray-700' }}">
                         {{ $cat->nome }}
                     </a>
                 @endforeach
             </div>
+        </div>
+    </div>
+
+{{-- Filtro de Ordenação (ajustado para parecer botão) --}}
+<form action="{{ route('produtos.index') }}" method="GET" class="relative">
+    @if(request()->has('categoria'))
+        <input type="hidden" name="categoria" value="{{ request('categoria') }}">
+    @endif
+
+    <select name="ordenar" onchange="this.form.submit()"
+        class="appearance-none inline-flex items-center px-6 py-2 bg-orange-500 text-black font-semibold rounded hover:bg-orange-600 transition cursor-pointer pr-10">
+        <option value="">Ordenar por</option>
+        <option value="preco_asc" {{ request('ordenar') == 'preco_asc' ? 'selected' : '' }}>Menor Preço</option>
+        <option value="preco_desc" {{ request('ordenar') == 'preco_desc' ? 'selected' : '' }}>Maior Preço</option>
+        <option value="nome_asc" {{ request('ordenar') == 'nome_asc' ? 'selected' : '' }}>Nome (A-Z)</option>
+        <option value="nome_desc" {{ request('ordenar') == 'nome_desc' ? 'selected' : '' }}>Nome (Z-A)</option>
+        <option value="recentes" {{ request('ordenar') == 'recentes' ? 'selected' : '' }}>Mais Recentes</option>
+    </select>
+
+    {{-- Ícone de seta (opcional) --}}
+    <div class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-black">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+    </div>
+</form>
+
+</div>
+
+{{-- Script para fechar menu de categorias --}}
+<script>
+    const menu = document.getElementById('categoria-menu');
+    const dropdown = document.getElementById('categoria-dropdown');
+
+    function toggleMenu() {
+        menu.classList.toggle('hidden');
+    }
+
+    document.addEventListener('click', function (e) {
+        if (!dropdown.contains(e.target)) {
+            menu.classList.add('hidden');
+        }
+    });
+
+    document.querySelectorAll('.categoria-option').forEach(el => {
+        el.addEventListener('click', () => {
+            menu.classList.add('hidden');
+        });
+    });
+</script>
 
             @if ($produtos->count())
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
