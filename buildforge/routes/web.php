@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\CategoriaControllerAD;
 use App\Http\Controllers\Admin\PedidoControllerAD;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ComprovanteController;
+use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\OfertaController;
 
 // Rotas públicas
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -23,29 +25,26 @@ Route::middleware(['auth', 'role:cliente', 'verified'])->group(function () {
     Route::post('/carrinho/adicionar/{id}', [CarrinhoController::class, 'adicionar'])->name('carrinho.adicionar');
     Route::post('/carrinho/remover/{id}', [CarrinhoController::class, 'remover'])->name('carrinho.remover');
 
-    // Página de checkout (GET)
+    // Checkout
     Route::get('/checkout', [PedidoController::class, 'checkout'])->name('checkout');
-
-    // Finalizar pedido (POST)
     Route::post('/pedido/finalizar', [PedidoController::class, 'finalizar'])->name('pedido.finalizar');
 
     // Pedidos do cliente
     Route::get('/pedidos', [PedidoController::class, 'index'])->name('pedidos.index');
     Route::get('/pedidos/{pedido}', [PedidoController::class, 'show'])->name('pedidos.show');
-    Route::get('/pedidos/{pedido}/comprovante', [PedidoController::class, 'comprovante'])->name('pedidos.comprovante');
-    Route::get('/pedidos/{pedido}/comprovante', [PedidoController::class, 'comprovante'])->name('pedidos.comprovante');
 
+    // Gerar comprovante PDF
+    Route::get('/pedidos/{pedido}/comprovante', [ComprovanteController::class, 'gerar'])
+        ->middleware(['auth', 'role:cliente'])
+        ->name('pedidos.comprovante');
+
+    // Newsletter: cadastro de email para ofertas
+    Route::post('/newsletter', [NewsletterController::class, 'store'])->name('newsletter.store');
 
     // Dashboard do cliente
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
-
-    // Gerar PDF do comprovante de pedido
-    Route::get('/pedidos/{pedido}/comprovante', [\App\Http\Controllers\ComprovanteController::class, 'gerar'])
-    ->middleware(['auth', 'role:cliente'])
-    ->name('pedidos.comprovante');
-     Route::get('/comprovante/{pedido}', [ComprovanteController::class, 'gerar'])->name('comprovante.gerar');
 });
 
 // Rotas autenticadas para qualquer usuário
@@ -58,10 +57,20 @@ Route::middleware(['auth'])->group(function () {
 
 // Rotas para administradores
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+    // Dashboard admin
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
 
+    // Formulário para envio de ofertas — usando controller para exibir a view
+    Route::get('/ofertas', [OfertaController::class, 'form'])->name('admin.ofertas.form');
+
+    // Envio das ofertas por email
+Route::post('/ofertas/enviar', [OfertaController::class, 'enviarOferta'])->name('admin.ofertas.enviar');
+
+
+
+    // Recursos admin
     Route::resource('produtos', ProdutoControllerAD::class)->names('admin.produtos');
     Route::resource('categorias', CategoriaControllerAD::class)->names('admin.categorias');
     Route::resource('pedidos', PedidoControllerAD::class)->names('admin.pedidos');

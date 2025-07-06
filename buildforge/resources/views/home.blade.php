@@ -76,17 +76,28 @@
         </div>
     </section>
 
-    {{-- Newsletter --}}
-    <section class="py-16 bg-orange-500 text-black text-center">
-        <h2 class="text-2xl font-bold mb-4">Assine nossa newsletter</h2>
-        <p class="mb-6">Fique por dentro das ofertas e novidades da BuildForge.</p>
-        <div class="flex flex-col sm:flex-row justify-center gap-4 max-w-md mx-auto">
-            <input type="email" placeholder="Seu e-mail" class="px-4 py-2 rounded w-full sm:w-auto">
-            <button class="bg-black text-orange-500 px-6 py-2 rounded hover:bg-gray-800">
-                Cadastrar
-            </button>
-        </div>
-    </section>
+<section class="py-16 bg-orange-500 text-black text-center">
+    <h2 class="text-2xl font-bold mb-4">Assine nossa newsletter</h2>
+    <p class="mb-6">Fique por dentro das ofertas e novidades da BuildForge.</p>
+    <form action="{{ route('newsletter.store') }}" method="POST" class="flex flex-col sm:flex-row justify-center gap-4 max-w-md mx-auto">
+        @csrf
+        <input 
+            type="email" 
+            name="email" 
+            placeholder="Seu e-mail" 
+            required
+            class="px-4 py-2 rounded w-full sm:w-auto"
+        >
+        <button type="submit" class="bg-black text-orange-500 px-6 py-2 rounded hover:bg-gray-800">
+            Cadastrar
+        </button>
+    </form>
+
+    @if(session('success'))
+        <p class="mt-4 text-green-700 font-semibold">{{ session('success') }}</p>
+    @endif
+</section>
+
 
 </div>
 @endsection

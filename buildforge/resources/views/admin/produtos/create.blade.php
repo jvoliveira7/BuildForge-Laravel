@@ -14,7 +14,8 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.produtos.store') }}" method="POST" enctype="multipart/form-data" class="max-w-lg">
+    <form action="{{ route('admin.produtos.store') }}" method="POST" enctype="multipart/form-data">
+
         @csrf
 
         <label class="block mb-2 font-semibold" for="nome">Nome</label>
