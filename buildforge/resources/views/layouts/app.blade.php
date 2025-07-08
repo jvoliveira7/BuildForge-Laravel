@@ -28,6 +28,20 @@
             @auth
                 @if(auth()->user()->role === 'cliente')
                     <a href="{{ route('pedidos.index') }}" class="hover:text-orange-400 text-white">Meus Pedidos</a>
+
+                    {{-- Carrinho do cliente --}}
+                    <a href="{{ route('carrinho.index') }}" class="relative hover:text-orange-400 text-white flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 3h2l.4 2M7 13h14l-1.5 7h-13L5 6H3" />
+                        </svg>
+                        Carrinho
+                        @if($quantidadeCarrinho > 0)
+                            <span class="ml-1 bg-orange-500 text-black text-xs font-bold px-2 py-0.5 rounded-full">
+                                {{ $quantidadeCarrinho }}
+                            </span>
+                        @endif
+                    </a>
                 @endif
             @endauth
 

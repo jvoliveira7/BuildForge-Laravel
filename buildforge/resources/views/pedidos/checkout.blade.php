@@ -3,7 +3,10 @@
 @section('content')
 <div class="min-h-screen bg-gray-600 text-white py-12">
     <div class="container mx-auto px-4">
+
         <h1 class="text-3xl font-bold text-orange-500 mb-8">Confirmação do Pedido</h1>
+
+        <p>Total: {{ $total }}</p>
 
         @if(session('error'))
             <div class="mb-4 text-red-400">{{ session('error') }}</div>
@@ -29,12 +32,18 @@
             Total: R$ {{ number_format($total, 2, ',', '.') }}
         </div>
 
-        <form action="{{ route('pedido.finalizar') }}" method="POST" class="mt-8 text-right">
+        <form action="/teste-redirect" method="POST" class="mt-6">
             @csrf
-            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg text-lg font-semibold">
-                Finalizar Pedido
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold">
+                TESTAR REDIRECT
             </button>
         </form>
+        
+<form method="POST" action="{{ route('pedido.finalizar') }}">
+    @csrf
+    <button type="submit" class="btn btn-primary">Finalizar Pedido</button>
+</form>
+
 
         <div class="mt-4 text-right">
             <a href="{{ route('carrinho.index') }}" class="text-sm text-gray-300 hover:underline">Voltar ao Carrinho</a>

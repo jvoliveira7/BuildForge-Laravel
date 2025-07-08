@@ -4,66 +4,25 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Pedido;
-use App\Models\ItemPedido;
 use Illuminate\Support\Facades\DB;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Services\MercadoPagoService;
 
 class PedidoController extends Controller
 {
-
-    public function comprovante(Pedido $pedido)
-{
-    if ($pedido->user_id !== auth()->id()) {
-        abort(403);
-    }
-
-    $pedido->load('itens.produto');
-
-    $pdf = Pdf::loadView('pedidos.comprovante', compact('pedido'));
-
-    return $pdf->download("comprovante_pedido_{$pedido->id}.pdf");
-}
-
-    public function index()
+    public function checkout()
     {
-        $pedidos = Pedido::where('user_id', auth()->id())
-                         ->with('itens')
-                         ->orderBy('created_at', 'desc')
-                      ->paginate(10);
+        $carrinho = session('carrinho', []);
 
-        return view('pedidos.index', compact('pedidos'));
-    }
-    
-public function checkout()
-{
-    $carrinho = session('carrinho', []);
-
-    if (empty($carrinho)) {
-        return redirect()->route('carrinho.index')->with('error', 'Seu carrinho está vazio.');
-    }
-    
-
-    // Calcula o total
-    $total = 0;
-    foreach ($carrinho as $item) {
-        $total += $item['preco'] * $item['quantidade'];
-    }
-
-    return view('pedidos.checkout', compact('carrinho', 'total'));
-}
-
-    public function show(Pedido $pedido)
-    {
-        // Garante que o pedido pertence ao usuário autenticado
-        if ($pedido->user_id !== auth()->id()) {
-            abort(403);
+        if (empty($carrinho)) {
+            return redirect()->route('carrinho.index')->with('error', 'Seu carrinho está vazio.');
         }
 
-        $pedido->load('itens');
-        return view('pedidos.show', compact('pedido'));
+        $total = collect($carrinho)->sum(fn($item) => $item['preco'] * $item['quantidade']);
+
+        return view('pedidos.checkout', compact('carrinho', 'total'));
     }
 
-    public function finalizar(Request $request)
+    public function finalizar(Request $request, MercadoPagoService $mercadoPago)
     {
         $user = auth()->user();
         $carrinho = session('carrinho', []);
@@ -72,17 +31,11 @@ public function checkout()
             return redirect()->back()->with('error', 'Seu carrinho está vazio.');
         }
 
-        
-
-\Log::info('Entrou em finalizar pedido para usuário ' . auth()->id());
-
-        $total = 0;
-        foreach ($carrinho as $item) {
-            $total += $item['preco'] * $item['quantidade'];
-        }
-
         DB::beginTransaction();
+
         try {
+            $total = collect($carrinho)->sum(fn($item) => $item['preco'] * $item['quantidade']);
+
             $pedido = Pedido::create([
                 'user_id' => $user->id,
                 'total' => $total,
@@ -97,12 +50,19 @@ public function checkout()
                 ]);
             }
 
+            $pedido->load('itens.produto');
+
             DB::commit();
+
             session()->forget('carrinho');
 
-            return redirect()->route('pedidos.index')->with('success', 'Pedido finalizado com sucesso!');
+            $url = $mercadoPago->criarPagamentoUrl($pedido);
+
+            return redirect()->away($url);
+
         } catch (\Exception $e) {
             DB::rollBack();
+            \Log::error('Erro ao finalizar pedido: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Erro ao finalizar pedido: ' . $e->getMessage());
         }
     }

@@ -12,12 +12,17 @@ use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ComprovanteController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\OfertaController;
+use App\Http\Controllers\PagamentoController;
 
+// -------------------------
 // Rotas públicas
+// -------------------------
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/produtos', [ProdutoController::class, 'index'])->name('produtos.index');
 
-// Rotas autenticadas para clientes
+// -------------------------
+// Rotas autenticadas (clientes)
+// -------------------------
 Route::middleware(['auth', 'role:cliente', 'verified'])->group(function () {
 
     // Carrinho
@@ -27,27 +32,43 @@ Route::middleware(['auth', 'role:cliente', 'verified'])->group(function () {
 
     // Checkout
     Route::get('/checkout', [PedidoController::class, 'checkout'])->name('checkout');
+
+    // FINALIZAR PEDIDO - essa rota deve chamar o método que cria pedido e redireciona para Mercado Pago
     Route::post('/pedido/finalizar', [PedidoController::class, 'finalizar'])->name('pedido.finalizar');
 
-    // Pedidos do cliente
+    // Pedidos
     Route::get('/pedidos', [PedidoController::class, 'index'])->name('pedidos.index');
     Route::get('/pedidos/{pedido}', [PedidoController::class, 'show'])->name('pedidos.show');
 
-    // Gerar comprovante PDF
-    Route::get('/pedidos/{pedido}/comprovante', [ComprovanteController::class, 'gerar'])
-        ->middleware(['auth', 'role:cliente'])
-        ->name('pedidos.comprovante');
+    // Comprovante PDF
+    Route::get('/pedidos/{pedido}/comprovante', [ComprovanteController::class, 'gerar'])->name('pedidos.comprovante');
 
-    // Newsletter: cadastro de email para ofertas
+    // Newsletter
     Route::post('/newsletter', [NewsletterController::class, 'store'])->name('newsletter.store');
 
     // Dashboard do cliente
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+
+    // Rotas para retorno de pagamento Mercado Pago
+    Route::get('/pagamento/sucesso/{pedido}', [PagamentoController::class, 'sucesso'])->name('pagamento.sucesso');
+    Route::get('/pagamento/falha', [PagamentoController::class, 'falha'])->name('pagamento.falha');
+    Route::get('/pagamento/pendente', [PagamentoController::class, 'pendente'])->name('pagamento.pendente');
+
+
 });
 
-// Rotas autenticadas para qualquer usuário
+// -------------------------
+// Notificações e retorno do PagSeguro/PagBank (sem autenticação)
+// -------------------------
+Route::post('/pagamento/notificacao', [PagamentoController::class, 'notificacao'])->middleware('api')->name('pagamento.notificacao');
+Route::get('/pagamento/retorno', [PagamentoController::class, 'retorno'])->name('pagamento.retorno');
+Route::get('/teste-token', [PagamentoController::class, 'testeToken']);
+
+// -------------------------
+// Rotas autenticadas (qualquer usuário)
+// -------------------------
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -55,26 +76,28 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy'); 
 });
 
-
-// Rotas para administradores
+// -------------------------
+// Rotas administrativas (admin)
+// -------------------------
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     // Dashboard admin
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
 
-    // Formulário para envio de ofertas — usando controller para exibir a view
+    // Ofertas
     Route::get('/ofertas', [OfertaController::class, 'form'])->name('admin.ofertas.form');
+    Route::post('/ofertas/enviar', [OfertaController::class, 'enviarOferta'])->name('admin.ofertas.enviar');
 
-    // Envio das ofertas por email
-Route::post('/ofertas/enviar', [OfertaController::class, 'enviarOferta'])->name('admin.ofertas.enviar');
-
-
-
-    // Recursos admin
+    // CRUDs admin
     Route::resource('produtos', ProdutoControllerAD::class)->names('admin.produtos');
     Route::resource('categorias', CategoriaControllerAD::class)->names('admin.categorias');
     Route::resource('pedidos', PedidoControllerAD::class)->names('admin.pedidos');
 });
 
+// -------------------------
+// Autenticação
+// -------------------------
 require __DIR__.'/auth.php';
+
+

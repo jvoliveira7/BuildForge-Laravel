@@ -1,0 +1,87 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Pedido;
+use App\Services\MercadoPagoService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+
+class PagamentoController extends Controller
+{
+    protected $mercadoPago;
+
+    public function __construct(MercadoPagoService $mercadoPago)
+    {
+        $this->mercadoPago = $mercadoPago;
+    }
+
+    public function iniciar($pedidoId)
+    {
+        $pedido = Pedido::with('itens.produto')->findOrFail($pedidoId);
+
+        if ($pedido->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        try {
+            $pagamentoUrl = $this->mercadoPago->criarPagamentoUrl($pedido);
+            return redirect()->away($pagamentoUrl);
+        } catch (\Exception $e) {
+            return redirect()->route('pedidos.show', $pedido)
+                ->withErrors('Erro no pagamento: ' . $e->getMessage());
+        }
+    }
+
+    public function notificacao(Request $request)
+    {
+        \Log::info('Notificação recebida do Mercado Pago: ' . json_encode($request->all()));
+
+        $topic = $request->input('type');
+        $id = $request->input('data.id');
+
+        \Log::info("Tipo: $topic | ID: $id");
+
+        if ($topic === 'payment') {
+            $response = Http::withToken(config('services.mercadopago.access_token'))
+                            ->get("https://api.mercadopago.com/v1/payments/{$id}");
+
+            if ($response->successful()) {
+                $pagamento = $response->json();
+                \Log::info('Dados do pagamento: ' . json_encode($pagamento));
+
+                $pedidoId = $pagamento['external_reference'] ?? null;
+                $status = $pagamento['status'];
+
+                if ($pedidoId) {
+                    $pedido = Pedido::find($pedidoId);
+                    if ($pedido) {
+                        $pedido->status = $status;
+                        $pedido->save();
+                        \Log::info("Pedido #{$pedidoId} atualizado para status: {$status}");
+                    }
+                }
+            } else {
+                \Log::error("Erro ao buscar pagamento: " . $response->body());
+            }
+        }
+
+        return response()->json(['received' => true]);
+    }
+
+    public function sucesso($pedidoId)
+    {
+        $pedido = Pedido::with('itens.produto')->findOrFail($pedidoId);
+        return view('pagamento.sucesso', compact('pedido'));
+    }
+
+    public function falha()
+    {
+        return view('pagamento.falha');
+    }
+
+    public function pendente()
+    {
+        return view('pagamento.pendente');
+    }
+}
