@@ -51,4 +51,11 @@ public function index()
 
     return view('produtos.index', compact('produtos', 'categorias', 'categoriaAtual'));
 }
+
+public function show($id)
+{
+    $produto = Produto::findOrFail($id);
+    return view('produtos.show', compact('produto'));
+}
+
 }

@@ -76,14 +76,16 @@
                             <div class="mt-4">
                                 <p class="text-orange-500 font-bold text-xl">R$ {{ number_format($produto->preco, 2, ',', '.') }}</p>
 
-                                <form action="{{ route('carrinho.adicionar', $produto->id) }}" method="POST" class="mt-3">
-                                    @csrf
-                                    <button type="submit"
-                                        class="w-full text-center bg-orange-500 hover:bg-orange-600 text-white py-2 rounded font-semibold transition">
-                                        Adicionar ao Carrinho
-                                    </button>
-                                </form>
-
+                                                @unless(auth()->user() && auth()->user()->role === 'admin')
+                            <form action="{{ route('carrinho.adicionar', $produto->id) }}" method="POST" class="mt-3">
+                                @csrf
+                                <button type="submit"
+                                    class="w-full text-center bg-orange-500 hover:bg-orange-600 text-white py-2 rounded font-semibold transition">
+                                    Adicionar ao Carrinho
+                                </button>
+                            </form>
+                        @endunless
+                        
                                 <a href="{{ route('produtos.show', $produto->id) }}"
                                    class="block mt-2 text-center bg-gray-700 hover:bg-gray-600 text-white py-2 rounded font-semibold transition">
                                     Ver Detalhes
