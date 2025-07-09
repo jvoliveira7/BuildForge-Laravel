@@ -11,11 +11,8 @@ class MercadoPagoService
 
     public function __construct()
     {
-        // Define o token conforme o ambiente (sandbox ou prod)
-        $env = config('mercadopago.env');
-        $this->accessToken = $env === 'prod' 
-            ? config('mercadopago.access_token_prod') 
-            : config('mercadopago.access_token_test');
+        // Pega o token diretamente do config('services.mercadopago.access_token')
+        $this->accessToken = config('services.mercadopago.access_token');
 
         // Pega a URL base do ngrok ou usa APP_URL como fallback
         $ngrokUrl = config('ngrok.ngrok_url');
@@ -29,14 +26,6 @@ class MercadoPagoService
         }
     }
 
-    /**
-     * Cria uma preferência de pagamento no Mercado Pago e retorna a URL do checkout.
-     *
-     * @param  \App\Models\Pedido  $pedido
-     * @param  bool  $usarEmailTeste
-     * @return string
-     * @throws \Exception
-     */
     public function criarPagamentoUrl($pedido, $usarEmailTeste = false)
     {
         $url = 'https://api.mercadopago.com/checkout/preferences';
@@ -51,7 +40,6 @@ class MercadoPagoService
             ];
         }
 
-        // URLs relativas para as rotas de retorno
         $successUrl = route('pagamento.sucesso', $pedido->id, false);
         $failureUrl = route('pagamento.falha', [], false);
         $pendingUrl = route('pagamento.pendente', [], false);
