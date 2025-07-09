@@ -7,13 +7,21 @@ use Illuminate\Support\Facades\Http;
 class MercadoPagoService
 {
     protected $accessToken;
+    protected $baseUrl;
 
     public function __construct()
     {
         $this->accessToken = config('services.mercadopago.access_token');
 
+        // Pega a URL base do ngrok ou usa APP_URL como fallback
+        $ngrokUrl = config('ngrok.ngrok_url');
+        $this->baseUrl = rtrim($ngrokUrl ?: config('app.url'), '/');
+
         if (!$this->accessToken) {
             throw new \Exception('Access Token do Mercado Pago não configurado.');
+        }
+        if (!$this->baseUrl) {
+            throw new \Exception('URL base do sistema não configurada.');
         }
     }
 
@@ -38,6 +46,11 @@ class MercadoPagoService
             ];
         }
 
+        // URLs relativas para as rotas de retorno
+        $successUrl = route('pagamento.sucesso', $pedido->id, false);
+        $failureUrl = route('pagamento.falha', [], false);
+        $pendingUrl = route('pagamento.pendente', [], false);
+
         $body = [
             'items' => $items,
             'external_reference' => (string) $pedido->id,
@@ -53,9 +66,9 @@ class MercadoPagoService
                 'installments' => 1,
             ],
             'back_urls' => [
-                'success' => route('pagamento.sucesso', $pedido->id),
-                'failure' => route('pagamento.falha'),
-                'pending' => route('pagamento.pendente'),
+                'success' => $this->baseUrl . $successUrl,
+                'failure' => $this->baseUrl . $failureUrl,
+                'pending' => $this->baseUrl . $pendingUrl,
             ],
             'auto_return' => 'approved',
         ];
