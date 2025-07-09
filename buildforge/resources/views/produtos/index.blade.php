@@ -30,15 +30,17 @@
 
                 <div id="categoria-menu" class="hidden origin-top absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 z-50">
                     <div class="py-1">
-                        <a href="{{ route('produtos.index', array_merge(request()->except('categoria'), ['categoria' => null])) }}"
-                           class="categoria-option block px-4 py-2 text-sm {{ is_null($categoriaAtual) ? 'bg-orange-500 text-black font-bold' : 'text-white hover:bg-gray-700' }}">
-                            Todas as Categorias
-                        </a>
-                        @foreach ($categorias as $cat)
-                            <a href="{{ route('produtos.index', array_merge(request()->except('categoria'), ['categoria' => $cat->id])) }}"
-                               class="categoria-option block px-4 py-2 text-sm {{ $categoriaAtual && $categoriaAtual->id === $cat->id ? 'bg-orange-500 text-black font-bold' : 'text-white hover:bg-gray-700' }}">
-                                {{ $cat->nome }}
-                            </a>
+                            <a href="{{ route('produtos.index', request()->except('categoria')) }}"
+        class="categoria-option block px-4 py-2 text-sm {{ is_null($categoriaAtual) ? 'bg-orange-500 text-black font-bold' : 'text-white hover:bg-gray-700' }}">
+        Todas as Categorias
+        </a>
+
+        @foreach ($categorias as $cat)
+            <a href="{{ route('produtos.index', array_merge(request()->except('categoria'), ['categoria' => $cat->id])) }}"
+            class="categoria-option block px-4 py-2 text-sm {{ $categoriaAtual && $categoriaAtual->id === $cat->id ? 'bg-orange-500 text-black font-bold' : 'text-white hover:bg-gray-700' }}">
+                {{ $cat->nome }}
+            </a>
+
                         @endforeach
                     </div>
                 </div>

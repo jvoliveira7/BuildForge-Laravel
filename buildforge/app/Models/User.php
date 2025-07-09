@@ -49,4 +49,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function avaliacoes()
+{
+    return $this->hasMany(\App\Models\Avaliacao::class);
+}
+
 }

@@ -4,7 +4,8 @@
 <div class="container mx-auto py-16 px-4">
     <h1 class="text-4xl font-extrabold text-orange-500 mb-12 text-center">Painel Administrativo</h1>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-8 justify-center max-w-4xl mx-auto">
+        {{-- Card Gerenciar Produtos --}}
         <a href="{{ route('admin.produtos.index') }}"
            class="flex flex-col items-center justify-center bg-gradient-to-r from-orange-500 to-yellow-400 text-white rounded-2xl shadow-xl hover:from-orange-600 hover:to-yellow-500 transition p-8 text-center group">
            
@@ -16,7 +17,7 @@
            <p class="text-sm mt-2 opacity-80">Adicionar, editar e remover produtos do catálogo</p>
         </a>
 
-            {{-- Card Gerenciar Pedidos --}}
+        {{-- Card Gerenciar Pedidos --}}
         <a href="{{ route('admin.pedidos.index') }}"
            class="flex flex-col items-center justify-center bg-gradient-to-r from-green-500 to-green-600 text-white rounded-2xl shadow-xl hover:from-green-600 hover:to-green-700 transition p-8 text-center group">
            
@@ -28,7 +29,6 @@
            <span class="text-xl font-semibold">📦 Gerenciar Pedidos</span>
            <p class="text-sm mt-2 opacity-80">Visualizar e alterar status dos pedidos</p>
         </a>
-
     </div>
 </div>
 @endsection

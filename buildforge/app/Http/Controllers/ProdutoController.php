@@ -10,11 +10,14 @@ class ProdutoController extends Controller
 public function index()
 {
     $categoriaId = request('categoria');
+    if (empty($categoriaId)) {
+        $categoriaId = null;
+    }
     $ordenar = request('ordenar');
     $search = request('search'); // pega o termo de busca
     $categoriaAtual = $categoriaId ? Categoria::find($categoriaId) : null;
 
-    $query = Produto::query();
+    $query = Produto::with('categoria');
 
     // Filtra pela categoria
     if ($categoriaId) {
@@ -47,15 +50,15 @@ public function index()
     }
 
     $produtos = $query->paginate(12)->appends(request()->all());
-    $categorias = Categoria::all();
+    $categorias = Categoria::all()->unique('nome')->values();
 
     return view('produtos.index', compact('produtos', 'categorias', 'categoriaAtual'));
 }
 
 public function show($id)
 {
-    $produto = Produto::findOrFail($id);
+    $produto = Produto::with(['avaliacoes.user'])->findOrFail($id);
     return view('produtos.show', compact('produto'));
-}
 
+}
 }
