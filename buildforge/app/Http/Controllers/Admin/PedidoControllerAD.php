@@ -11,7 +11,7 @@ class PedidoControllerAD extends Controller
     // Listar todos os pedidos (paginação)
     public function index()
     {
-        $pedidos = Pedido::with('user')->latest()->paginate(15);
+         $pedidos = \App\Models\Pedido::with('user')->latest()->paginate(10); // ou 15, 20...
         return view('admin.pedidos.index', compact('pedidos'));
     }
 

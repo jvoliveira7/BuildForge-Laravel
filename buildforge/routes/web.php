@@ -19,6 +19,8 @@ use App\Http\Controllers\PagamentoController;
 // -------------------------
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/produtos', [ProdutoController::class, 'index'])->name('produtos.index');
+Route::get('/produtos/{produto}', [ProdutoController::class, 'show'])->name('produtos.show');
+
 
 // -------------------------
 // Rotas autenticadas (clientes)

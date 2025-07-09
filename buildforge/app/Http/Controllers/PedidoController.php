@@ -9,6 +9,18 @@ use App\Services\MercadoPagoService;
 
 class PedidoController extends Controller
 {
+
+
+    public function index()
+{
+     $pedidos = Pedido::where('user_id', auth()->id())
+        ->with('itens.produto')
+        ->latest()
+        ->paginate(5); 
+        
+    return view('pedidos.index', compact('pedidos'));
+}
+
     public function checkout()
     {
         $carrinho = session('carrinho', []);
