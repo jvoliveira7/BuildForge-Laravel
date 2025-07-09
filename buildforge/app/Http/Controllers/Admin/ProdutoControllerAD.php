@@ -8,11 +8,23 @@
     class ProdutoControllerAD extends Controller
     {
         // Lista todos os produtos
-        public function index()
-        {
-            $produtos = Produto::latest()->paginate(10);
-            return view('admin.produtos.index', compact('produtos'));
-        }
+      public function index(Request $request)
+{
+    $query = Produto::with('categoria');
+
+    if ($request->filled('search')) {
+        $query->where('nome', 'like', '%' . $request->search . '%');
+    }
+
+    if ($request->filled('categoria_id')) {
+        $query->where('categoria_id', $request->categoria_id);
+    }
+
+    $produtos = $query->paginate(10)->appends($request->query());
+    $categorias = Categoria::all();
+
+    return view('admin.produtos.index', compact('produtos', 'categorias'));
+}
 
         // Mostra o formulário para criar novo produto
         public function create()

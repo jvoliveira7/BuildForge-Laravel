@@ -11,12 +11,19 @@ public function index()
 {
     $categoriaId = request('categoria');
     $ordenar = request('ordenar');
+    $search = request('search'); // pega o termo de busca
     $categoriaAtual = $categoriaId ? Categoria::find($categoriaId) : null;
 
     $query = Produto::query();
 
+    // Filtra pela categoria
     if ($categoriaId) {
         $query->where('categoria_id', $categoriaId);
+    }
+
+    // FILTRO DE BUSCA pelo nome (case insensitive)
+    if ($search) {
+        $query->where('nome', 'like', '%' . $search . '%');
     }
 
     // Lógica de ordenação
@@ -44,12 +51,4 @@ public function index()
 
     return view('produtos.index', compact('produtos', 'categorias', 'categoriaAtual'));
 }
-
-public function show($id)
-{
-    $produto = \App\Models\Produto::findOrFail($id);
-
-    return view('produtos.show', compact('produto'));
-}
-
 }
