@@ -14,14 +14,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Cria usuários de teste
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
 
         // Adiciona o seeder das categorias
         $this->call(\Database\Seeders\CategoriaSeeder::class);
         $this->call(CategorizarProdutosSeeder::class);
+
+        //Adiciona o seeder de avaliacoes
+        $this->call(AvaliacoesSeeder::class);
+
     }
 }

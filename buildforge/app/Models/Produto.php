@@ -13,4 +13,14 @@ class Produto extends Model
         return $this->belongsTo(Categoria::class);
     }
 
+    public function avaliacoes()
+    {
+        return $this->hasMany(\App\Models\Avaliacao::class);
+    }
+    
+    public function mediaAvaliacoes()
+    {
+        return $this->avaliacoes()->avg('nota') ?? 0;
+    }
+    
 }

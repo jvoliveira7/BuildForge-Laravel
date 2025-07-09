@@ -13,6 +13,7 @@ use App\Http\Controllers\ComprovanteController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\OfertaController;
 use App\Http\Controllers\PagamentoController;
+use App\Http\Controllers\AvaliacaoController;
 
 // -------------------------
 // Rotas públicas
@@ -20,7 +21,6 @@ use App\Http\Controllers\PagamentoController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/produtos', [ProdutoController::class, 'index'])->name('produtos.index');
 Route::get('/produtos/{id}', [ProdutoController::class, 'show'])->name('produtos.show');
-
 
 // -------------------------
 // Rotas autenticadas (clientes)
@@ -32,13 +32,9 @@ Route::middleware(['auth', 'role:cliente', 'verified'])->group(function () {
     Route::post('/carrinho/adicionar/{id}', [CarrinhoController::class, 'adicionar'])->name('carrinho.adicionar');
     Route::post('/carrinho/remover/{id}', [CarrinhoController::class, 'remover'])->name('carrinho.remover');
 
-    // Checkout
+    // Checkout e Pedido
     Route::get('/checkout', [PedidoController::class, 'checkout'])->name('checkout');
-
-    // FINALIZAR PEDIDO - essa rota deve chamar o método que cria pedido e redireciona para Mercado Pago
     Route::post('/pedido/finalizar', [PedidoController::class, 'finalizar'])->name('pedido.finalizar');
-
-    // Pedidos
     Route::get('/pedidos', [PedidoController::class, 'index'])->name('pedidos.index');
     Route::get('/pedidos/{pedido}', [PedidoController::class, 'show'])->name('pedidos.show');
 
@@ -53,18 +49,21 @@ Route::middleware(['auth', 'role:cliente', 'verified'])->group(function () {
         return view('dashboard');
     })->name('dashboard');
 
-    // Rotas para retorno de pagamento Mercado Pago
+    // Pagamento Mercado Pago
     Route::get('/pagamento/sucesso/{pedido}', [PagamentoController::class, 'sucesso'])->name('pagamento.sucesso');
     Route::get('/pagamento/falha', [PagamentoController::class, 'falha'])->name('pagamento.falha');
     Route::get('/pagamento/pendente', [PagamentoController::class, 'pendente'])->name('pagamento.pendente');
 
-
+    // Avaliação de produto
+    Route::post('/produtos/{produto}/avaliar', [\App\Http\Controllers\AvaliacaoController::class, 'store'])->name('avaliacoes.store');
+    Route::post('/produtos/{produto}/avaliar', [AvaliacaoController::class, 'store'])->name('avaliacoes.store');
 });
 
 // -------------------------
-// Notificações e retorno do PagSeguro/PagBank (sem autenticação)
+// Notificações e retorno do Pagamento (sem autenticação)
 // -------------------------
-Route::post('/pagamento/notificacao', [PagamentoController::class, 'notificacao'])->middleware('api')->name('pagamento.notificacao');
+Route::post('/pagamento/notificacao', [PagamentoController::class, 'notificacao'])
+    ->middleware('api')->name('pagamento.notificacao');
 Route::get('/pagamento/retorno', [PagamentoController::class, 'retorno'])->name('pagamento.retorno');
 Route::get('/teste-token', [PagamentoController::class, 'testeToken']);
 
@@ -82,24 +81,22 @@ Route::middleware(['auth'])->group(function () {
 // Rotas administrativas (admin)
 // -------------------------
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
-    // Dashboard admin
+
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
 
-    // Ofertas
+    // Ofertas por email
     Route::get('/ofertas', [OfertaController::class, 'form'])->name('admin.ofertas.form');
     Route::post('/ofertas/enviar', [OfertaController::class, 'enviarOferta'])->name('admin.ofertas.enviar');
 
-    // CRUDs admin
+    // CRUDs
     Route::resource('produtos', ProdutoControllerAD::class)->names('admin.produtos');
     Route::resource('categorias', CategoriaControllerAD::class)->names('admin.categorias');
     Route::resource('pedidos', PedidoControllerAD::class)->names('admin.pedidos');
 });
 
 // -------------------------
-// Autenticação
+// Autenticação padrão do Laravel Breeze
 // -------------------------
 require __DIR__.'/auth.php';
-
-
