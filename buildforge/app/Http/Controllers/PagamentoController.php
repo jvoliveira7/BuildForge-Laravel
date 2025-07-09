@@ -25,7 +25,7 @@ class PagamentoController extends Controller
         }
 
         try {
-            $pagamentoUrl = $this->mercadoPago->criarPagamentoUrl($pedido);
+            $pagamentoUrl = $this->mercadoPago->criarPagamentoUrl($pedido, true);
             return redirect()->away($pagamentoUrl);
         } catch (\Exception $e) {
             return redirect()->route('pedidos.show', $pedido)

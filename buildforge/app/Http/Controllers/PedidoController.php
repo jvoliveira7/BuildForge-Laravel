@@ -68,7 +68,7 @@ class PedidoController extends Controller
 
             session()->forget('carrinho');
 
-            $url = $mercadoPago->criarPagamentoUrl($pedido);
+            $url = $mercadoPago->criarPagamentoUrl($pedido, true);
 
             return redirect()->away($url);
 
