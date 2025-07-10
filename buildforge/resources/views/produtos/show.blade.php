@@ -38,16 +38,14 @@
                     </div>
                 </section>
 
-                @if ($produto->avaliacoes->count())
+                @if ($avaliacoes->total() > 0)
                     <div class="mb-6 flex items-center gap-3">
                         <span class="text-yellow-400 text-3xl select-none">
-                            @for ($i = 1; $i <= 5; $i++)
-                                @if ($i <= round($produto->mediaAvaliacoes()))
-                                    ★
-                                @else
-                                    ☆
-                                @endif
-                            @endfor
+                                    @php $media = round($produto->mediaAvaliacoes()) @endphp
+            @for ($i = 1; $i <= 5; $i++)
+                {{ $i <= $media ? '★' : '☆' }}
+            @endfor
+
                         </span>
                         <span class="text-gray-400 text-sm">
                             ({{ $produto->avaliacoes->count() }} avaliações)
@@ -123,35 +121,50 @@
             @if($produto->avaliacoes->count())
                 <section class="border-t border-gray-700 pt-6 max-w-2xl">
                     <h3 class="text-xl font-semibold mb-4">Avaliações dos clientes</h3>
-                    <ul class="space-y-6">
-                        @foreach($produto->avaliacoes as $avaliacao)
-                            <li class="p-4 bg-gray-800 rounded-lg shadow-inner">
-                                <div class="flex items-center mb-2">
-                                    <span class="text-yellow-400 text-xl select-none">
-                                        @for ($i = 1; $i <= 5; $i++)
-                                            @if ($i <= $avaliacao->nota)
-                                                ★
-                                            @else
-                                                ☆
-                                            @endif
-                                        @endfor
-                                    </span>
-                                    <span class="ml-3 text-gray-300 font-semibold">
-                                        {{ $avaliacao->user->name ?? 'Usuário' }}
-                                    </span>
-                                    <span class="ml-auto text-xs text-gray-500">
-                                        {{ $avaliacao->created_at->format('d/m/Y') }}
-                                    </span>
-                                </div>
-                                <p class="text-gray-300 whitespace-pre-line">{{ $avaliacao->comentario ?? 'Sem comentário' }}</p>
-                            </li>
-                        @endforeach
-                    </ul>
+
+               <ul id="lista-avaliacoes" class="space-y-6">
+    @include('partials.avaliacoes', ['avaliacoes' => $avaliacoes])
+</ul>
+
+@if ($avaliacoes->hasMorePages())
+    <div class="text-center mt-6">
+   <button id="btn-mais-avaliacoes"
+        data-url="{{ $avaliacoes->nextPageUrl() }}"
+        class="bg-gray-700 hover:bg-gray-600 text-white px-6 py-2 rounded-lg shadow transition flex items-center justify-center gap-2">
+    <span>🔄</span>
+    <span>Carregando...</span>
+</button>
+
+    </div>
+@endif
+
                 </section>
             @endif
         </div>
     </div>
 </div>
+
+<!-- Scripts para carregar mais avaliações -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).on('click', '#btn-mais-avaliacoes', function () {
+    let button = $(this);
+    let url = button.data('url');
+
+    if (!url) return;
+
+    $.get(url, function (response) {
+        $('#lista-avaliacoes').append(response.html);
+
+        if (response.next_page_url) {
+            button.data('url', response.next_page_url);
+        } else {
+            button.remove();
+        }
+    });
+});
+</script>
+
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {

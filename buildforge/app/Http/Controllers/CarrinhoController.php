@@ -34,15 +34,17 @@ public function adicionar(Request $request, $id)
     return redirect()->back()->with('success', 'Produto adicionado ao carrinho!');
 }
 
-    public function remover($id)
-    {
-        $carrinho = session()->get('carrinho', []);
+public function remover($id)
+{
+    $carrinho = session()->get('carrinho', []);
 
-        if (isset($carrinho[$id])) {
-            unset($carrinho[$id]);
-            session()->put('carrinho', $carrinho);
-        }
-
-        return redirect()->route('carrinho.index')->with('success', 'Produto removido do carrinho.');
+    if (isset($carrinho[$id])) {
+        unset($carrinho[$id]);
+        session()->put('carrinho', $carrinho);
     }
+
+    $html = view('partials.carrinho', ['carrinho' => $carrinho])->render();
+
+    return response()->json(['html' => $html]);
+}
 }

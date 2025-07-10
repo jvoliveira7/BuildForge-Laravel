@@ -21,6 +21,9 @@ use App\Http\Controllers\AvaliacaoController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/produtos', [ProdutoController::class, 'index'])->name('produtos.index');
 Route::get('/produtos/{id}', [ProdutoController::class, 'show'])->name('produtos.show');
+Route::get('/produtos/{produto}/avaliacoes', [ProdutoController::class, 'carregarAvaliacoes'])
+    ->name('produtos.avaliacoes');
+
 
 // -------------------------
 // Rotas autenticadas (clientes)
@@ -31,6 +34,8 @@ Route::middleware(['auth', 'role:cliente', 'verified'])->group(function () {
     Route::get('/carrinho', [CarrinhoController::class, 'index'])->name('carrinho.index');
     Route::post('/carrinho/adicionar/{id}', [CarrinhoController::class, 'adicionar'])->name('carrinho.adicionar');
     Route::post('/carrinho/remover/{id}', [CarrinhoController::class, 'remover'])->name('carrinho.remover');
+
+
 
     // Checkout e Pedido
     Route::get('/checkout', [PedidoController::class, 'checkout'])->name('checkout');
