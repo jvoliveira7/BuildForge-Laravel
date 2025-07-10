@@ -1,5 +1,4 @@
-<nav x-data="{ open: false }" class="bg-black border-b border-gray-800 text-white">
-    <!-- Primary Navigation Menu -->
+<nav x-data="{ open: false }" class="bg-black border-b border-gray-800 text-white relative">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16 items-center">
             <!-- Logo -->
@@ -14,8 +13,18 @@
                 <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-white hover:text-orange-400 transition">
                     {{ __('Dashboard') }}
                 </x-nav-link>
-                <x-nav-link :href="route('carrinho.index')" :active="request()->routeIs('carrinho.index')" class="text-white hover:text-orange-400 transition">
-                    {{ __('Carrinho') }}
+
+                <x-nav-link :href="route('carrinho.index')" :active="request()->routeIs('carrinho.index')" class="relative text-white hover:text-orange-400 transition flex items-center">
+                    <svg class="w-6 h-6 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 3h2l.4 2M7 13h10l4-8H5.4" />
+                        <circle cx="7" cy="21" r="1" />
+                        <circle cx="20" cy="21" r="1" />
+                    </svg>
+                    Carrinho
+                        <span id="contador-carrinho" class="absolute -top-2 -right-3 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center font-bold">
+                    {{ session('carrinho_quantidade', 0) }}
+                </span>
+
                 </x-nav-link>
             </div>
 
@@ -75,7 +84,6 @@
             </x-responsive-nav-link>
         </div>
 
-        <!-- Responsive User Info -->
         <div class="pt-4 pb-1 border-t border-gray-700">
             <div class="px-4">
                 <div class="font-medium text-base">{{ Auth::user()->name }}</div>
@@ -97,3 +105,6 @@
         </div>
     </div>
 </nav>
+
+{{-- Toast container --}}
+<div id="toast-container" class="fixed top-4 right-4 space-y-2 z-50"></div>

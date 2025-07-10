@@ -44,8 +44,8 @@ class MercadoPagoService
         $failureUrl = route('pagamento.falha', [], false);
         $pendingUrl = route('pagamento.pendente', [], false);
 
-        $payerEmail = $usarEmailTeste ? 'TESTUSER2021201970@testuser.com' : auth()->user()->email;
-        $payerName = $usarEmailTeste ? 'Comprador 1' : auth()->user()->name;
+        $payerEmail = $usarEmailTeste ? 'TESTUSER1355271103@testuser.com' : auth()->user()->email;
+        $payerName = $usarEmailTeste ? 'Comprador 3' : auth()->user()->name;
 
         $body = [
             'items' => $items,

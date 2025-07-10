@@ -30,17 +30,16 @@
 
                 <div id="categoria-menu" class="hidden origin-top absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 z-50">
                     <div class="py-1">
-                            <a href="{{ route('produtos.index', request()->except('categoria')) }}"
-        class="categoria-option block px-4 py-2 text-sm {{ is_null($categoriaAtual) ? 'bg-orange-500 text-black font-bold' : 'text-white hover:bg-gray-700' }}">
-        Todas as Categorias
-        </a>
+                        <a href="{{ route('produtos.index', request()->except('categoria')) }}"
+                           class="categoria-option block px-4 py-2 text-sm {{ is_null($categoriaAtual) ? 'bg-orange-500 text-black font-bold' : 'text-white hover:bg-gray-700' }}">
+                           Todas as Categorias
+                        </a>
 
-        @foreach ($categorias as $cat)
-            <a href="{{ route('produtos.index', array_merge(request()->except('categoria'), ['categoria' => $cat->id])) }}"
-            class="categoria-option block px-4 py-2 text-sm {{ $categoriaAtual && $categoriaAtual->id === $cat->id ? 'bg-orange-500 text-black font-bold' : 'text-white hover:bg-gray-700' }}">
-                {{ $cat->nome }}
-            </a>
-
+                        @foreach ($categorias as $cat)
+                            <a href="{{ route('produtos.index', array_merge(request()->except('categoria'), ['categoria' => $cat->id])) }}"
+                               class="categoria-option block px-4 py-2 text-sm {{ $categoriaAtual && $categoriaAtual->id === $cat->id ? 'bg-orange-500 text-black font-bold' : 'text-white hover:bg-gray-700' }}">
+                                {{ $cat->nome }}
+                            </a>
                         @endforeach
                     </div>
                 </div>
@@ -78,16 +77,15 @@
                             <div class="mt-4">
                                 <p class="text-orange-500 font-bold text-xl">R$ {{ number_format($produto->preco, 2, ',', '.') }}</p>
 
-                                                @unless(auth()->user() && auth()->user()->role === 'admin')
-                            <form action="{{ route('carrinho.adicionar', $produto->id) }}" method="POST" class="mt-3">
-                                @csrf
-                                <button type="submit"
-                                    class="w-full text-center bg-orange-500 hover:bg-orange-600 text-white py-2 rounded font-semibold transition">
-                                    Adicionar ao Carrinho
-                                </button>
-                            </form>
-                        @endunless
-                        
+                                @unless(auth()->user() && auth()->user()->role === 'admin')
+                                    <form action="{{ route('carrinho.adicionar', $produto->id) }}" method="POST" class="mt-3 form-adicionar-carrinho">
+                                        @csrf
+                                        <button type="submit" class="w-full text-center bg-orange-500 hover:bg-orange-600 text-white py-2 rounded font-semibold transition">
+                                            Adicionar ao Carrinho
+                                        </button>
+                                    </form>
+                                @endunless
+
                                 <a href="{{ route('produtos.show', $produto->id) }}"
                                    class="block mt-2 text-center bg-gray-700 hover:bg-gray-600 text-white py-2 rounded font-semibold transition">
                                     Ver Detalhes
@@ -107,25 +105,79 @@
     </div>
 </div>
 
-{{-- JS para o menu dropdown --}}
+{{-- Toast container --}}
+<div id="toast-container" class="fixed top-5 right-5 z-50 space-y-2"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    const menu = document.getElementById('categoria-menu');
-    const dropdown = document.getElementById('categoria-dropdown');
+function showToast(message) {
+    const container = $('#toast-container');
+    const toast = $(`
+        <div class="bg-green-600 text-white px-4 py-2 rounded shadow-md animate-fade-in-out">
+            ${message}
+        </div>
+    `);
 
-    function toggleMenu() {
-        menu.classList.toggle('hidden');
-    }
+    container.append(toast);
 
-    document.addEventListener('click', function (e) {
-        if (!dropdown.contains(e.target)) {
-            menu.classList.add('hidden');
-        }
-    });
+    setTimeout(() => {
+        toast.fadeOut(600, () => toast.remove());
+    }, 3000);
+}
 
-    document.querySelectorAll('.categoria-option').forEach(el => {
-        el.addEventListener('click', () => {
-            menu.classList.add('hidden');
+$(document).ready(function() {
+    $('.form-adicionar-carrinho').submit(function(e) {
+        e.preventDefault();
+        const form = $(this);
+        const url = form.attr('action');
+        const token = form.find('input[name="_token"]').val();
+
+        $.ajax({
+            url: url,
+            method: 'POST',
+            data: {_token: token},
+            success: function(response) {
+                showToast('Produto adicionado ao carrinho!');
+                if (response.quantidadeTotal !== undefined) {
+                    $('#contador-carrinho').fadeOut(200, function() {
+                        $(this).text(response.quantidadeTotal).fadeIn(200);
+                    });
+                }
+            },
+            error: function() {
+                alert('Erro ao adicionar o produto.');
+            }
         });
     });
+});
+
+const menu = document.getElementById('categoria-menu');
+const dropdown = document.getElementById('categoria-dropdown');
+
+function toggleMenu() {
+    menu.classList.toggle('hidden');
+}
+
+document.addEventListener('click', function (e) {
+    if (!dropdown.contains(e.target)) {
+        menu.classList.add('hidden');
+    }
+});
+
+document.querySelectorAll('.categoria-option').forEach(el => {
+    el.addEventListener('click', () => {
+        menu.classList.add('hidden');
+    });
+});
 </script>
+
+<style>
+@keyframes fade-in-out {
+    0%, 100% {opacity: 0;}
+    10%, 90% {opacity: 1;}
+}
+.animate-fade-in-out {
+    animation: fade-in-out 3s ease forwards;
+}
+</style>
 @endsection

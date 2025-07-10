@@ -31,6 +31,11 @@
                     <span class="text-lg font-bold text-indigo-600">
                         Total: R$ {{ number_format($pedido->total, 2, ',', '.') }}
                     </span>
+
+                    <a href="{{ route('pedidos.comprovante', $pedido->id) }}" 
+                       class="inline-block ml-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">
+                       Ver Comprovante
+                    </a>
                 </div>
             </div>
         @empty

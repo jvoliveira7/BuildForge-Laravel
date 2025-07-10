@@ -62,7 +62,10 @@ Route::middleware(['auth', 'role:cliente', 'verified'])->group(function () {
     // Avaliação de produto
     Route::post('/produtos/{produto}/avaliar', [\App\Http\Controllers\AvaliacaoController::class, 'store'])->name('avaliacoes.store');
     Route::post('/produtos/{produto}/avaliar', [AvaliacaoController::class, 'store'])->name('avaliacoes.store');
+
+
 });
+
 
 // -------------------------
 // Notificações e retorno do Pagamento (sem autenticação)

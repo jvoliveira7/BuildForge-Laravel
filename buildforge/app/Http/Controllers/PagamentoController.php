@@ -84,4 +84,31 @@ class PagamentoController extends Controller
     {
         return view('pagamento.pendente');
     }
+
+     public function pagamentoDiretoExemplo(Request $request)
+    {
+        // Aqui, no real, o token deve vir do front via $request->input('token')
+        $token = $request->input('token');
+
+        $body = [
+            "transaction_amount" => 100, // pode puxar valor do pedido dinamicamente
+            "token" => "bfa6f7edaa3c4c4abdc95b0e2e5c1911",        // token do cartão que vem do front
+            "description" => "Produto Teste",
+            "installments" => 1,
+            "payment_method_id" => "visa",
+            "payer" => [
+                "email" => "TESTUSER1355271103@testuser.com",
+                "identification" => [
+                    "type" => "CPF",
+                    "number" => "19119119100"
+                ]
+            ]
+        ];
+
+        $response = Http::withToken(config('services.mercadopago.access_token'))
+            ->acceptJson()
+            ->post('https://api.mercadopago.com/v1/payments', $body);
+
+        return response()->json($response->json());
+    }
 }
